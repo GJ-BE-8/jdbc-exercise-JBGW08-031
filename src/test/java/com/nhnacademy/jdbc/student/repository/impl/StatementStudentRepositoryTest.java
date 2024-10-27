@@ -2,14 +2,17 @@ package com.nhnacademy.jdbc.student.repository.impl;
 
 import com.nhnacademy.jdbc.student.domain.Student;
 import com.nhnacademy.jdbc.student.repository.StudentRepository;
-import com.nhnacademy.jdbc.student.repository.impl.StatementStudentRepository;
-import lombok.extern.slf4j.Slf4j;
-import org.junit.jupiter.api.*;
-
 import java.util.Iterator;
 import java.util.Optional;
 import java.util.Random;
-import java.util.stream.IntStream;
+import lombok.extern.slf4j.Slf4j;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.MethodOrderer;
+import org.junit.jupiter.api.Order;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestMethodOrder;
 
 @Slf4j
 @TestMethodOrder(value = MethodOrderer.OrderAnnotation.class)
@@ -18,18 +21,18 @@ class StatementStudentRepositoryTest {
     public static StudentRepository studentRepository;
 
     @BeforeAll
-    static void setUp(){
+    static void setUp() {
 
         studentRepository = new StatementStudentRepository();
 
         Random random = new Random();
-        Iterator<Integer> iterator = random.ints(20,50).iterator();
-        for(int i=1; i<=10; i++){
-            String id="student" + i;
-            String name="학생" + i;
+        Iterator<Integer> iterator = random.ints(20, 50).iterator();
+        for (int i = 1; i <= 10; i++) {
+            String id = "student" + i;
+            String name = "학생" + i;
             Student.GENDER gender = Student.GENDER.M;
-            int age =iterator.next();
-            Student student = new Student(id, name, gender,age);
+            int age = iterator.next();
+            Student student = new Student(id, name, gender, age);
             studentRepository.deleteById(id);
             studentRepository.save(student);
         }
@@ -41,9 +44,9 @@ class StatementStudentRepositoryTest {
     @Order(1)
     @DisplayName("insert student : student 100")
     void save() {
-        Student newStudent = new Student("student100","학생100", Student.GENDER.M,30);
+        Student newStudent = new Student("student100", "학생100", Student.GENDER.M, 30);
         int result = studentRepository.save(newStudent);
-        Assertions.assertEquals(1,result);
+        Assertions.assertEquals(1, result);
     }
 
     @Test
@@ -54,9 +57,9 @@ class StatementStudentRepositoryTest {
         log.info("student:{}", studentOptional.get());
 
         Assertions.assertAll(
-                ()->Assertions.assertEquals("student1",studentOptional.get().getId()),
-                ()->Assertions.assertEquals("학생1",studentOptional.get().getName()),
-                ()->Assertions.assertEquals(Student.GENDER.M,studentOptional.get().getGender())
+                () -> Assertions.assertEquals("student1", studentOptional.get().getId()),
+                () -> Assertions.assertEquals("학생1", studentOptional.get().getName()),
+                () -> Assertions.assertEquals(Student.GENDER.M, studentOptional.get().getGender())
         );
 
     }
@@ -64,7 +67,7 @@ class StatementStudentRepositoryTest {
     @Test
     @Order(3)
     @DisplayName("findById-marco10000")
-    void findById_10000(){
+    void findById_10000() {
         Optional<Student> studentOptional = studentRepository.findById("student10000");
         Assertions.assertFalse(studentOptional.isPresent());
     }
@@ -74,7 +77,7 @@ class StatementStudentRepositoryTest {
     @DisplayName("update : student1")
     void update() {
 
-        Student student = new Student("student1","엔에이치엔아카데미", Student.GENDER.F,30);
+        Student student = new Student("student1", "엔에이치엔아카데미", Student.GENDER.F, 30);
         int result = studentRepository.update(student);
         //Assume.assumeFalse(result>0);
 
@@ -82,10 +85,10 @@ class StatementStudentRepositoryTest {
 
 
         Assertions.assertAll(
-                ()->Assertions.assertEquals("student1",newStudent.get().getId()),
-                ()->Assertions.assertEquals("엔에이치엔아카데미",newStudent.get().getName()),
-                ()->Assertions.assertEquals(Student.GENDER.F,newStudent.get().getGender()),
-                ()->Assertions.assertEquals(30,newStudent.get().getAge())
+                () -> Assertions.assertEquals("student1", newStudent.get().getId()),
+                () -> Assertions.assertEquals("엔에이치엔아카데미", newStudent.get().getName()),
+                () -> Assertions.assertEquals(Student.GENDER.F, newStudent.get().getGender()),
+                () -> Assertions.assertEquals(30, newStudent.get().getAge())
         );
 
     }
@@ -94,7 +97,7 @@ class StatementStudentRepositoryTest {
     @Order(5)
     @DisplayName("delete : student1")
     void deleteById() {
-        String id="student1";
+        String id = "student1";
         int result = studentRepository.deleteById(id);
         Optional<Student> studentDto = studentRepository.findById(id);
         Assertions.assertFalse(studentDto.isPresent());

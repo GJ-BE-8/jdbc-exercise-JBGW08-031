@@ -5,7 +5,7 @@ import java.sql.DriverManager;
 import java.sql.SQLException;
 
 public class DbUtils {
-    public DbUtils(){
+    public DbUtils() {
         throw new IllegalStateException("Utility class");
     }
 
@@ -13,11 +13,13 @@ public class DbUtils {
         Connection connection = null;
         try {
             //todo connection.
-            connection = DriverManager.getConnection("jdbc:mysql://ip:3306/{database}","user_name","password");
+            connection =
+                    DriverManager.getConnection("jdbc:mysql://133.186.241.167:3306/nhn_academy_31", "nhn_academy_31",
+                            "3u.SF)xeXWIfzB[Y");
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
-        
+
         return connection;
     }
 

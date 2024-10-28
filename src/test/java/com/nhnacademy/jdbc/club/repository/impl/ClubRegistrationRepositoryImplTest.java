@@ -8,14 +8,20 @@ import com.nhnacademy.jdbc.student.domain.Student;
 import com.nhnacademy.jdbc.student.repository.StudentRepository;
 import com.nhnacademy.jdbc.student.repository.impl.StudentRepositoryImpl;
 import com.nhnacademy.jdbc.util.DbUtils;
-import lombok.extern.slf4j.Slf4j;
-import org.junit.jupiter.api.*;
-
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Random;
+import lombok.extern.slf4j.Slf4j;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.MethodOrderer;
+import org.junit.jupiter.api.Order;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestMethodOrder;
 
 @Slf4j
 @TestMethodOrder(value = MethodOrderer.OrderAnnotation.class)
@@ -33,64 +39,64 @@ class ClubRegistrationRepositoryImplTest {
         connection.setAutoCommit(false);
 
         //초기화 테스트를 위해서 데이터가 남아 있다면 삭제
-        clubRegistrationRepository.deleteByStudentIdAndClubId(connection,"s1","c1");
-        clubRegistrationRepository.deleteByStudentIdAndClubId(connection,"s1","c2");
-        clubRegistrationRepository.deleteByStudentIdAndClubId(connection,"s1","c3");
-        clubRegistrationRepository.deleteByStudentIdAndClubId(connection,"s2","c1");
-        clubRegistrationRepository.deleteByStudentIdAndClubId(connection,"s3","c2");
-        clubRegistrationRepository.deleteByStudentIdAndClubId(connection,"s4","c2");
-        clubRegistrationRepository.deleteByStudentIdAndClubId(connection,"s5","c3");
+        clubRegistrationRepository.deleteByStudentIdAndClubId(connection, "s1", "c1");
+        clubRegistrationRepository.deleteByStudentIdAndClubId(connection, "s1", "c2");
+        clubRegistrationRepository.deleteByStudentIdAndClubId(connection, "s1", "c3");
+        clubRegistrationRepository.deleteByStudentIdAndClubId(connection, "s2", "c1");
+        clubRegistrationRepository.deleteByStudentIdAndClubId(connection, "s3", "c2");
+        clubRegistrationRepository.deleteByStudentIdAndClubId(connection, "s4", "c2");
+        clubRegistrationRepository.deleteByStudentIdAndClubId(connection, "s5", "c3");
 
-        for(int i=0; i<10; i++){
-            String studentId="s"+i;
-            String clubId="c"+i;
-            clubRepository.deleteByClubId(connection,clubId);
-            studentRepository.deleteById(connection,studentId);
+        for (int i = 0; i < 10; i++) {
+            String studentId = "s" + i;
+            String clubId = "c" + i;
+            clubRepository.deleteByClubId(connection, clubId);
+            studentRepository.deleteById(connection, studentId);
         }
 
         // club 등록
-        Club club1 = new Club("c1","Spring club");
+        Club club1 = new Club("c1", "Spring club");
         clubRepository.save(connection, club1);
 
-        Club club2 = new Club("c2","GoLang club");
+        Club club2 = new Club("c2", "GoLang club");
         clubRepository.save(connection, club2);
 
-        Club club3 = new Club("c3","Python club");
+        Club club3 = new Club("c3", "Python club");
         clubRepository.save(connection, club3);
 
-        Club club4 = new Club("c4","c# club");
+        Club club4 = new Club("c4", "c# club");
         clubRepository.save(connection, club4);
 
-        Club club5 = new Club("c5","php club");
+        Club club5 = new Club("c5", "php club");
         clubRepository.save(connection, club5);
 
-        Iterator<Integer> intIterator = new Random().ints(20,30).iterator();
+        Iterator<Integer> intIterator = new Random().ints(20, 30).iterator();
 
         //student테이브 비우기
         studentRepository.deleteAll(connection);
 
         //학생 10명 생성
-        for(int i=0; i<10; i++){
+        for (int i = 0; i < 10; i++) {
             int age = intIterator.next();
-            Student student = new Student("s"+i,"학생"+i, i%2==1 ? Student.GENDER.M : Student.GENDER.F , age);
-            studentRepository.save(connection,student);
+            Student student = new Student("s" + i, "학생" + i, i % 2 == 1 ? Student.GENDER.M : Student.GENDER.F, age);
+            studentRepository.save(connection, student);
         }
 
         //s1->c1
-        clubRegistrationRepository.save(connection,"s1","c1");
+        clubRegistrationRepository.save(connection, "s1", "c1");
         //s1->c2
-        clubRegistrationRepository.save(connection,"s1","c2");
+        clubRegistrationRepository.save(connection, "s1", "c2");
         //s1->c3
-        clubRegistrationRepository.save(connection,"s1","c3");
+        clubRegistrationRepository.save(connection, "s1", "c3");
 
         //s2->c1
-        clubRegistrationRepository.save(connection,"s2","c1");
+        clubRegistrationRepository.save(connection, "s2", "c1");
         //s3->c2
-        clubRegistrationRepository.save(connection,"s3","c2");
+        clubRegistrationRepository.save(connection, "s3", "c2");
         //s4->c2
-        clubRegistrationRepository.save(connection,"s4","c2");
+        clubRegistrationRepository.save(connection, "s4", "c2");
         //s5->c3
-        clubRegistrationRepository.save(connection,"s5","c3");
+        clubRegistrationRepository.save(connection, "s5", "c3");
 
     }
 
@@ -119,22 +125,22 @@ class ClubRegistrationRepositoryImplTest {
          */
 
         List<ClubStudent> expected = List.of(
-                new ClubStudent("s1","학생1","c1","Spring club"),
-                new ClubStudent("s1","학생1","c2","GoLang club"),
-                new ClubStudent("s1","학생1","c3","Python club"),
-                new ClubStudent("s2","학생2","c1","Spring club"),
-                new ClubStudent("s3","학생3","c2","GoLang club"),
-                new ClubStudent("s4","학생4","c2","GoLang club"),
-                new ClubStudent("s5","학생5","c3","Python club")
+                new ClubStudent("s1", "학생1", "c1", "Spring club"),
+                new ClubStudent("s1", "학생1", "c2", "GoLang club"),
+                new ClubStudent("s1", "학생1", "c3", "Python club"),
+                new ClubStudent("s2", "학생2", "c1", "Spring club"),
+                new ClubStudent("s3", "학생3", "c2", "GoLang club"),
+                new ClubStudent("s4", "학생4", "c2", "GoLang club"),
+                new ClubStudent("s5", "학생5", "c3", "Python club")
         );
 
         List<ClubStudent> actual = clubRegistrationRepository.findClubStudents(connection);
 
-        for(ClubStudent clubStudent : actual){
-            log.debug("clubStudent:{}",clubStudent);
+        for (ClubStudent clubStudent : actual) {
+            log.debug("clubStudent:{}", clubStudent);
         }
 
-        Assertions.assertEquals(expected,actual);
+        Assertions.assertEquals(expected, actual);
     }
 
     @Test
@@ -155,27 +161,27 @@ class ClubRegistrationRepositoryImplTest {
 
 
         List<ClubStudent> expected = List.of(
-                new ClubStudent("s0","학생0",null,null),
-                new ClubStudent("s1","학생1","c1","Spring club"),
-                new ClubStudent("s1","학생1","c2","GoLang club"),
-                new ClubStudent("s1","학생1","c3","Python club"),
-                new ClubStudent("s2","학생2","c1","Spring club"),
-                new ClubStudent("s3","학생3","c2","GoLang club"),
-                new ClubStudent("s4","학생4","c2","GoLang club"),
-                new ClubStudent("s5","학생5","c3","Python club"),
-                new ClubStudent("s6","학생6",null,null),
-                new ClubStudent("s7","학생7",null,null),
-                new ClubStudent("s8","학생8",null,null),
-                new ClubStudent("s9","학생9",null,null)
+                new ClubStudent("s0", "학생0", null, null),
+                new ClubStudent("s1", "학생1", "c1", "Spring club"),
+                new ClubStudent("s1", "학생1", "c2", "GoLang club"),
+                new ClubStudent("s1", "학생1", "c3", "Python club"),
+                new ClubStudent("s2", "학생2", "c1", "Spring club"),
+                new ClubStudent("s3", "학생3", "c2", "GoLang club"),
+                new ClubStudent("s4", "학생4", "c2", "GoLang club"),
+                new ClubStudent("s5", "학생5", "c3", "Python club"),
+                new ClubStudent("s6", "학생6", null, null),
+                new ClubStudent("s7", "학생7", null, null),
+                new ClubStudent("s8", "학생8", null, null),
+                new ClubStudent("s9", "학생9", null, null)
         );
 
         List<ClubStudent> actual = clubRegistrationRepository.findClubStudents_left_join(connection);
 
-        for(ClubStudent clubStudent : actual){
-            log.debug("clubStudent:{}",clubStudent);
+        for (ClubStudent clubStudent : actual) {
+            log.debug("clubStudent:{}", clubStudent);
         }
 
-        Assertions.assertEquals(expected,actual);
+        Assertions.assertEquals(expected, actual);
 
     }
 
@@ -198,24 +204,24 @@ class ClubRegistrationRepositoryImplTest {
 
 
         List<ClubStudent> expected = List.of(
-                new ClubStudent("s1","학생1","c1","Spring club"),
-                new ClubStudent("s2","학생2","c1","Spring club"),
-                new ClubStudent("s1","학생1","c2","GoLang club"),
-                new ClubStudent("s3","학생3","c2","GoLang club"),
-                new ClubStudent("s4","학생4","c2","GoLang club"),
-                new ClubStudent("s1","학생1","c3","Python club"),
-                new ClubStudent("s5","학생5","c3","Python club"),
-                new ClubStudent(null,null,"c4","c# club"),
-                new ClubStudent(null,null,"c5","php club")
+                new ClubStudent("s1", "학생1", "c1", "Spring club"),
+                new ClubStudent("s2", "학생2", "c1", "Spring club"),
+                new ClubStudent("s1", "학생1", "c2", "GoLang club"),
+                new ClubStudent("s3", "학생3", "c2", "GoLang club"),
+                new ClubStudent("s4", "학생4", "c2", "GoLang club"),
+                new ClubStudent("s1", "학생1", "c3", "Python club"),
+                new ClubStudent("s5", "학생5", "c3", "Python club"),
+                new ClubStudent(null, null, "c4", "c# club"),
+                new ClubStudent(null, null, "c5", "php club")
         );
 
         List<ClubStudent> actual = clubRegistrationRepository.findClubStudents_right_join(connection);
 
-        for(ClubStudent clubStudent : actual){
-            log.debug("clubStudent:{}",clubStudent);
+        for (ClubStudent clubStudent : actual) {
+            log.debug("clubStudent:{}", clubStudent);
         }
 
-        Assertions.assertEquals(expected,actual);
+        Assertions.assertEquals(expected, actual);
 
     }
 
@@ -249,29 +255,29 @@ class ClubRegistrationRepositoryImplTest {
         */
 
         List<ClubStudent> expected = List.of(
-                new ClubStudent("s0","학생0",null,null),
-                new ClubStudent("s1","학생1","c1","Spring club"),
-                new ClubStudent("s1","학생1","c2","GoLang club"),
-                new ClubStudent("s1","학생1","c3","Python club"),
-                new ClubStudent("s2","학생2","c1","Spring club"),
-                new ClubStudent("s3","학생3","c2","GoLang club"),
-                new ClubStudent("s4","학생4","c2","GoLang club"),
-                new ClubStudent("s5","학생5","c3","Python club"),
-                new ClubStudent("s6","학생6",null,null),
-                new ClubStudent("s7","학생7",null,null),
-                new ClubStudent("s8","학생8",null,null),
-                new ClubStudent("s9","학생9",null,null),
-                new ClubStudent(null,null,"c4","c# club"),
-                new ClubStudent(null,null,"c5","php club")
+                new ClubStudent("s0", "학생0", null, null),
+                new ClubStudent("s1", "학생1", "c1", "Spring club"),
+                new ClubStudent("s1", "학생1", "c2", "GoLang club"),
+                new ClubStudent("s1", "학생1", "c3", "Python club"),
+                new ClubStudent("s2", "학생2", "c1", "Spring club"),
+                new ClubStudent("s3", "학생3", "c2", "GoLang club"),
+                new ClubStudent("s4", "학생4", "c2", "GoLang club"),
+                new ClubStudent("s5", "학생5", "c3", "Python club"),
+                new ClubStudent("s6", "학생6", null, null),
+                new ClubStudent("s7", "학생7", null, null),
+                new ClubStudent("s8", "학생8", null, null),
+                new ClubStudent("s9", "학생9", null, null),
+                new ClubStudent(null, null, "c4", "c# club"),
+                new ClubStudent(null, null, "c5", "php club")
         );
 
         List<ClubStudent> actual = clubRegistrationRepository.findClubStudents_full_join(connection);
 
-        for(ClubStudent clubStudent : actual){
-            log.debug("clubStudent:{}",clubStudent);
+        for (ClubStudent clubStudent : actual) {
+            log.debug("clubStudent:{}", clubStudent);
         }
 
-        Assertions.assertEquals(expected,actual);
+        Assertions.assertEquals(expected, actual);
     }
 
     @Test
@@ -291,20 +297,20 @@ class ClubRegistrationRepositoryImplTest {
         */
 
         List<ClubStudent> expected = List.of(
-                new ClubStudent("s0","학생0",null,null),
-                new ClubStudent("s6","학생6",null,null),
-                new ClubStudent("s7","학생7",null,null),
-                new ClubStudent("s8","학생8",null,null),
-                new ClubStudent("s9","학생9",null,null)
+                new ClubStudent("s0", "학생0", null, null),
+                new ClubStudent("s6", "학생6", null, null),
+                new ClubStudent("s7", "학생7", null, null),
+                new ClubStudent("s8", "학생8", null, null),
+                new ClubStudent("s9", "학생9", null, null)
         );
 
         List<ClubStudent> actual = clubRegistrationRepository.findClubStudents_left_excluding_join(connection);
 
-        for(ClubStudent clubStudent : actual){
-            log.debug("clubStudent:{}",clubStudent);
+        for (ClubStudent clubStudent : actual) {
+            log.debug("clubStudent:{}", clubStudent);
         }
 
-        Assertions.assertEquals(expected,actual);
+        Assertions.assertEquals(expected, actual);
     }
 
     @Test
@@ -325,17 +331,17 @@ class ClubRegistrationRepositoryImplTest {
         */
 
         List<ClubStudent> expected = List.of(
-                new ClubStudent(null,null,"c4","c# club"),
-                new ClubStudent(null,null,"c5","php club")
+                new ClubStudent(null, null, "c4", "c# club"),
+                new ClubStudent(null, null, "c5", "php club")
         );
 
         List<ClubStudent> actual = clubRegistrationRepository.findClubStudents_right_excluding_join(connection);
 
-        for(ClubStudent clubStudent : actual){
-            log.debug("clubStudent:{}",clubStudent);
+        for (ClubStudent clubStudent : actual) {
+            log.debug("clubStudent:{}", clubStudent);
         }
 
-        Assertions.assertEquals(expected,actual);
+        Assertions.assertEquals(expected, actual);
 
     }
 
@@ -371,22 +377,22 @@ class ClubRegistrationRepositoryImplTest {
         */
 
         List<ClubStudent> expected = List.of(
-                new ClubStudent("s0","학생0",null,null),
-                new ClubStudent("s6","학생6",null,null),
-                new ClubStudent("s7","학생7",null,null),
-                new ClubStudent("s8","학생8",null,null),
-                new ClubStudent("s9","학생9",null,null),
-                new ClubStudent(null,null,"c4","c# club"),
-                new ClubStudent(null,null,"c5","php club")
+                new ClubStudent("s0", "학생0", null, null),
+                new ClubStudent("s6", "학생6", null, null),
+                new ClubStudent("s7", "학생7", null, null),
+                new ClubStudent("s8", "학생8", null, null),
+                new ClubStudent("s9", "학생9", null, null),
+                new ClubStudent(null, null, "c4", "c# club"),
+                new ClubStudent(null, null, "c5", "php club")
         );
 
         List<ClubStudent> actual = clubRegistrationRepository.findClubStudents_outher_excluding_join(connection);
 
-        for(ClubStudent clubStudent : actual){
-            log.debug("clubStudent:{}",clubStudent);
+        for (ClubStudent clubStudent : actual) {
+            log.debug("clubStudent:{}", clubStudent);
         }
 
-        Assertions.assertEquals(expected,actual);
+        Assertions.assertEquals(expected, actual);
 
     }
 }
